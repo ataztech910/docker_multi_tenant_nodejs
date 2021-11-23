@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  nginx:
+    restart: always
+    image: nginx:alpine
+    volumes:
+        - "./default.conf:/etc/nginx/conf.d/default.conf"
+    ports:
+        - "80:80"
+
+  tenant1:
+    build:
+      context: ./tenant1
+      dockerfile: ./Dockerfile
+    command: npm run start
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./tenant1:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - nginx  
+
+  tenant2:
+    build:
+      context: ./tenant2
+      dockerfile: ./Dockerfile
+    command: npm run start
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./tenant2:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - nginx      

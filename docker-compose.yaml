@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  nginx:
+    restart: always
+    image: nginx:alpine
+    volumes:
+        - "./default.conf:/etc/nginx/conf.d/default.conf"
+    ports:
+        - "80:80"
+
+  portfolio_site:
+    build:
+      context: ./portfolio_site
+      dockerfile: ./Dockerfile
+    command: npm run start
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./portfolio_site:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - nginx  
+
+  blog:
+    build:
+      context: ./blog
+      dockerfile: ./Dockerfile
+    command: npm run start
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./blog:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - nginx  
+
+  api:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    command: npm run start
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./api:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - nginx      
